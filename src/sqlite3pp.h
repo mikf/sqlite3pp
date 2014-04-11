@@ -1,5 +1,5 @@
 /*
-* sqlite3++.h
+* sqlite3pp.h
 *
 * Copyright 2014 Mike Fährmann <mike_faehrmann@web.de>
 *
