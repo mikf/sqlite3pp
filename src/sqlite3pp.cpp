@@ -40,15 +40,15 @@ database::database()
 database::database(const char* path)
     : handle_(nullptr)
 {
+    SQLITE3PP_DEBUG_MSG("database constructor");
     open(path);
-    SQLITE3PP_DEBUG_MSG("database constructor with handle_ == " << handle_);
 }
 
 database::database(const std::string& path)
     : handle_(nullptr)
 {
+    SQLITE3PP_DEBUG_MSG("database constructor");
     open(path);
-    SQLITE3PP_DEBUG_MSG("database constructor with handle_ == " << handle_);
 }
 
 // database::database(database&& other)
@@ -99,6 +99,7 @@ statement database::prepare(const char* stmt_str) const
     if(stmt == nullptr)
         throw error(handle_);
 
+    SQLITE3PP_DEBUG_MSG(stmt_str);
     return statement(stmt);
 }
 
