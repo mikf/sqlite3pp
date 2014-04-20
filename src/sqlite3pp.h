@@ -43,6 +43,15 @@ class error;
 
 
 ////////////////////////////////////////////////////////////////////////////////
+// constants
+enum transaction_mode
+{
+    deferred, immediate, exclusive
+};
+
+
+
+////////////////////////////////////////////////////////////////////////////////
 //
 class database
 {
@@ -64,6 +73,8 @@ public:
 
     statement prepare(const char* stmt) const;
     statement prepare(const std::string& stmt) const;
+
+    transaction begin_transaction(transaction_mode = deferred);
 
     int changes() const;
     int total_changes() const;
@@ -202,7 +213,18 @@ private:
 //
 class transaction
 {
-// TODO
+public:
+    ~transaction();
+
+    void commit();
+    void rollback();
+
+private:
+    database& db_;
+    bool      rollback_;
+
+    explicit transaction(database& db);
+    friend class database;
 };
 
 

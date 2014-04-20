@@ -107,6 +107,24 @@ statement database::prepare(const std::string& stmt_str) const
     return prepare(stmt_str.c_str());
 }
 
+transaction database::begin_transaction(transaction_mode tm)
+{
+    switch(tm)
+    {
+    case deferred:
+        prepare("BEGIN DEFERRED").exec();
+        break;
+    case immediate:
+        prepare("BEGIN IMMEDIATE").exec();
+        break;
+    case exclusive:
+        prepare("BEGIN EXCLUSIVE").exec();
+        break;
+    }
+
+    return transaction(*this);
+}
+
 int database::changes() const
 {
     return sqlite3_changes(handle_);
@@ -213,8 +231,6 @@ const char* statement::parameter_name(int index) const
 
 
 
-
-
 iterator::iterator()
     : stmt_(nullptr)
 {}
@@ -285,6 +301,27 @@ double iterator::as_double(int column) const
 }
 
 
+
+transaction::transaction(database& db)
+    : db_(db), rollback_(true)
+{}
+
+transaction::~transaction()
+{
+    if(rollback_)
+        rollback();
+}
+
+void transaction::commit()
+{
+    db_.prepare("COMMIT").exec();
+    rollback_ = false;
+}
+
+void transaction::rollback()
+{
+    db_.prepare("ROLLBACK").exec();
+}
 
 
 
